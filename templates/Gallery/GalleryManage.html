@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+{% block title %}相册{% endblock %}
+{% block link %}
+<link href="../static/lib/plugins/file-input/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block main %}
+<section class="content">
+  <div class="row">
+    <div class="col-md-4">
+     <form role="form" id="addDirForm" action="/gallery/Manage/AddDir" method=post>
+      <div class="input-group">
+        <div class="input-group-btn">
+          <button type="submit" class="btn btn-flat  bg-aqua">添加相册</button>
+        </div>
+        <!-- /btn-group -->
+        <input type="text" name="new_dirname" class="form-control">
+      </div>
+    </form>
+  </div>
+  <button type="button" class="btn bg-yellow btn-flat pull-right ">
+    <a href="/gallery/List"><<返回并查看</a></button>
+  </div>
+  <dir class="row">
+    {% for entry in entries %}
+    <div class="col-md-2 col-xs-6">
+      <div class="btn-group">
+       <button type="button" class="btn bg-info btn-flat   looking" looking="{{ entry.dir_path }}">{{ entry.dir_name }}</button>
+       {% if entry.dir_name is not equalto 'My Honey' %}
+       <button type="button" class="btn btn-info btn-flat dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li><a href="/gallery/Manage/DelDir?path={{ entry.dir_path }}">删除本相册</a></li>
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</dir>
+<div class="row">
+  <div class="col-md-12 toshow" style="display:none;">
+    <label class="control-label">Select File</label>
+    <input id="input-pa" name="input-pa[]" type="file" multiple class="file-loading">
+  </div>
+</div>
+</section>
+
+
+{% endblock %}
+{% block pageend %}
+<script type="text/javascript" src="../static/lib/dist/js/bootstrapValidator.min.js"></script>
+<script src="../static/lib/plugins/file-input/js/fileinput.min.js"></script>
+<script type="text/javascript">
+ /* global blueimp, $ */
+ $(function () {
+  $('#addDirForm')
+  .bootstrapValidator({
+    message: 'This value is not valid',
+    feedbackIcons: {
+      valid: 'glyphicon glyphicon-ok',
+      invalid: 'glyphicon glyphicon-remove',
+      validating: 'glyphicon glyphicon-refresh'
+    },
+    fields: {
+      new_dirname: {
+        message: '相册名不合法！',
+        validators: {
+          notEmpty: {
+            message: '相册名不能为空！'
+          },
+          stringLength: {
+            min: 2,
+            max: 20,
+            message: '相册名必须在3到20之间！'
+          },
+          regexp: {
+            regexp: /^[a-zA-Z0-9_\.\u4E00-\u9FFF+-]+$/,
+            message: '相册名中不能包含非法字符'
+          },
+          remote: {
+            type: 'POST',
+            url: '/gallery/Manage/CheckExist',
+            message: '相册已存在！',
+            delay: 1000
+          }
+        }
+      }
+    }
+  });
+  $(".looking").click(function(){
+    $('.toshow').show();
+    var looking = $(this).attr('looking');
+    jQuery.ajax({
+      url: "/gallery/Manage/Detail",
+      async: true,
+      cache: false,
+      data:"looking="+looking,
+      success: function(result){
+        $("#input-pa").fileinput("destroy").fileinput('refresh',{
+          uploadUrl: "/gallery/Manage/Upload?folder_name="+looking,
+          deleteUrl: "/gallery/Manage/Delete",
+          uploadAsync: false,
+          minFileCount: 1,
+          maxFileCount: 100,
+          overwriteInitial: false,
+          initialPreview: result.urls,
+    initialPreviewAsData: true, // defaults markup
+    initialPreviewFileType: 'image', // image is the default and can be overridden in config below
+    initialPreviewConfig: result.configs,
+    allowedFileTypes : ['image'],
+  }).on('filesorted', function(e, params) {
+    console.log('File sorted params', params);
+  }).on('fileuploaded', function(e, params) {
+    console.log('File uploaded params', params);
+  });
+},
+error:function(data){
+  alert("发生错误！");
+}
+});
+  });
+})
+</script>
+{% endblock %}

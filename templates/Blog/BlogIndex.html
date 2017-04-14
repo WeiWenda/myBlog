@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block title %}笔记{% endblock %}
+{% block main %}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    编程笔记
+  </h1>
+
+  <ol class="breadcrumb">
+    <li><a href="/"><i class="fa  fa-home"></i> Home</a></li>
+    <li class="active">编程笔记</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <!-- Your Page Content Here -->
+  <div class="row">
+    {% for entry in entries %}
+    <div class="col-lg-3 col-xs-6">
+      <!-- small box -->
+      <div class="small-box {{ entry.bg_string }}">
+        <div class="inner">
+          <h3>　{{ entry.counts }}</h3>
+          <h4><b>　{{ entry.type_desc }}</b></h4>
+        </div>
+        <div class="icon">
+          <i class= "{{ entry.icon_string }}" ></i> 
+        </div>
+        <a href="/blog/List?type={{ entry.type_id }}" class="small-box-footer">查看更多 <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    <!-- ./col -->
+    {% else %}
+
+    <div class="col-lg-6 col-xs-12">
+      <div class="box box-solid box-warning">
+        <div class="box-header">
+          <h3 class="box-title">警告</h3>
+        </div><!-- /.box-header -->
+        <div class="box-body">
+          抱歉，目前还没有内容！
+        </div><!-- /.box-body -->
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    {% endfor %}
+    {% if session.logged_in is defined %}
+    <div class="col-lg-3 col-xs-6">
+     <div class="small-box bg-purple">
+      <div class="inner">
+         <h3>　</h3>
+          <h4><b>　添加笔记分类</b></h4>
+      </div>
+      <div class="icon">
+        <i class= "ion ion-android-add" ></i> 
+      </div>
+      <a href="/blog/AddType" class="small-box-footer">添加分类 <i class="fa fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <div class="col-lg-3 col-xs-6">
+     <div class="small-box bg-teal">
+      <div class="inner">
+         <h3>　</h3>
+          <h4><b>　添加笔记</b></h4>
+      </div>
+      <div class="icon">
+        <i class= "ion ion-android-add" ></i> 
+      </div>
+      <a href="/blog/Add" class="small-box-footer">添加笔记 <i class="fa fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+<!-- /.row -->
+</section>
+<!-- /.content -->
+{% endblock %}
+{% block pageend %}
+{% endblock %}

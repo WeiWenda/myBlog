@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block title %}
+{{  entry.page_title }}
+{% endblock %}
+{% block main %}
+<!-- Main content -->
+<section class="content">
+  <!--   <div id='Container'></div> -->
+  <iframe src="{{ entry.url }}" id='Container' onload="changeFrameHeight()"  width="100%" marginheight="0" marginwidth="0" frameborder="0" scrolling=" " >
+  </iframe>
+</section>
+  <!-- /.content -->
+{% endblock %}
+{% block pageend %}
+  <script type="text/javascript">
+    function changeFrameHeight(){
+      var ifm= document.getElementById("Container"); 
+      ifm.height=document.documentElement.clientHeight;
+    // ifm.width=document.documentElement.clientWidth;
+  }
+  window.onresize=function(){  
+   changeFrameHeight();  
+ } 
+</script>
+<script type="text/javascript">
+/*  $(document).ready( function() {
+    $("#Container").load("http://user.qzone.qq.com/994184916"); 
+  }); */
+</script>
+{% endblock %}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7" lang=en-us><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie10 lt-ie9 lt-ie8" lang=en-us><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie10 lt-ie9" lang=en-us><![endif]-->
+<!--[if IE 9]><html class="no-js lt-ie10 lt-ie9" lang=en-us><![endif]-->
+<!--[if lt IE 10]><html class="no-js lt-ie10" lang=en-us><![endif]-->
+<!--[if !IE]>><![endif]-->
+<html class="no-js" lang="en">
+<head> 
+  <title>蔚文达的主页</title> 
+  <meta charset="utf-8" content="text/html" http-equiv="content-type" /> 
+  <meta content="ie=edge,chrome=1" http-equiv="x-ua-compatible" /> 
+  <meta content="My name is Ricardo and I'm a passionate full stack developer linving in the northen coast of Spain. I love building web applications using Ruby on Rails, CoffeeScript, Haml and Sass." name="description" /> 
+  <meta content="Ricardo Garc&iacute;a Vega - http://twitter.com/bigardone" name="author" /> 
+  <meta content="Ricardo Garc&iacute;a Vega, full stack, web applications, web developer, ruby, ruby on rails, javascript, jquery, haml, sass, coffeescript, html5" name="keywords" /> 
+  <meta content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width" name="viewport" /> 
+  <link href="../static/lib/plugins/font.googleapis.css" media="screen" rel="stylesheet" /> 
+  <link href="../static/lib/plugins/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet" /> 
+  <link href="../static/lib/dist/css/application-61f9cf9f.css" media="all" rel="stylesheet" />
+  <link href="../static/lib/plugins/openLayer/css/ol.css" rel="stylesheet" />  
+</head> 
+<body class="page"> 
+  <nav id="main_nav"> 
+   <ul> 
+    <li> <a class="toggle-nav"> 
+      <div class="icon fa fa-bars fa-lg"></div> </a> 
+      <ul class="nav-links"> 
+        <li class="active"> <a href="#main_header">Home</a> </li> 
+        <li> <a href="#about">About</a> </li> 
+        <li> <a href="#blog">Blog</a> </li> 
+        <li> <a href="#work">Work</a> </li> 
+        <li> <a href="#contact">Contact</a> </li> 
+      </ul> </li> 
+    </ul> 
+  </nav> 
+  <header data-stellar-background-ratio="0.1" id="main_header"> 
+   <section class="center"> 
+    <div class="container"> 
+     <div id="welcome"> 
+      <div class="main-logo"> 
+       <a href="/"><img src="../static/lib/dist/img/logo-cd52bd68.png" /> </a> 
+     </div> 
+   </div> 
+ </div> 
+</section> 
+<img class="avatar" src="../static/lib/dist/img/DSC_2406.jpg" /> 
+</header> 
+<div id="main_content"> 
+ <section id="about"> 
+  <div class="container"> 
+   <header> 
+    <h2>你好!</h2> 
+  </header> 
+  <p class="center"> 我是 <strong>蔚文达</strong> ，一名仙交大的 <strong>计算机专业研究生</strong>，家住山西。使用的编程语言有： <strong>Scala</strong>，<strong>Java</strong> 和 <strong>Python</strong>。 创建这个主页为了分享一些踩过的坑，同时也方便管理自己的知识。</p> 
+</div> 
+</section> 
+<hr /> 
+<section id="blog"> 
+  <div class="container"> 
+   <header> 
+    <h2>最近的文档</h2> 
+  </header> 
+  <div class="articles"> 
+    {% for doc in docs %}
+    <article> 
+     <header> 
+      <h4><a href="/doc/View?doc_id={{ doc.doc_id }}">{{ doc.title }}</a></h4> 
+      <div class="meta-data">
+        发表于：{{ doc.create_date }} on 
+        <ul class="tags"> 
+          <li> <a href="/doc/List">{{ doc.typeDesc }}</a> </li> 
+        </ul> 
+      </div> 
+    </header> 
+    <p>{{ doc.abstract }}</p> 
+    <a class="small" href="/doc/View?doc_id={{ doc.doc_id }}">去阅读 →</a> 
+  </article> 
+  {% endfor %}
+</div> 
+<header> 
+  <h2>最近的笔记 & 随笔</h2> 
+</header> 
+<div class="articles"> 
+  {% for blog in blogs %}
+  <article> 
+   <header> 
+    <h4><a href="/blog/View?blog_id={{ blog.blog_id }}&SType={{ blog.typeS }}">{{ blog.title }}</a></h4> 
+    <div class="meta-data">
+      发表于：{{ blog.create_date }} on 
+      <ul class="tags">
+        <li> <a href="/blog/List?type={{ blog.typeL }}&Stype={{ blog.typeS }}">{{ blog.typeSDesc }}</a> </li> 
+      </ul> 
+    </div> 
+  </header> 
+  <p>{{ blog.abstract }}</p> 
+  <a class="small" href="/blog/View?blog_id={{ blog.blog_id }}&SType={{ blog.typeS }}">去阅读 →</a> 
+</article> 
+{% endfor %}
+</div> 
+<div class="call-to-action"> 
+  <a href="/blog/Index">进入主页</a> 
+</div> 
+</div> 
+</section> 
+<hr /> 
+<section id="work"> 
+  <div class="container"> 
+   <header> 
+    <h2>最近的工作</h2> 
+  </header> 
+  <p>一些最近参与项目的小Demo</p> 
+  <html>
+  <head></head>
+  <body>
+    <div class="projects"> 
+    <div class="animate tpin project animated fadeInLeft" data-animation="fadeInLeft"> 
+      <div class="info"> 
+       <header> 
+        <h3>纳税人利益关联网络</h3> 
+      </header> 
+      <p>基于税务大数据和图理论分析纳税人的纳税风险</p> 
+      <small>采用Echarts2,Spark,Oracle的架构</small> 
+      <div class="call-to-action"> 
+        <a href="http://tpin.1024cloud.com/TPIN/tpin/pages/lyglwl.html" target="_blank">去看看</a> 
+      </div> 
+    </div> 
+  </div> 
+  <div class="animate checkin project animated fadeInRight" data-animation="fadeInRight"> 
+    <div class="info"> 
+     <header> 
+      <h3>实验室考勤统计</h3> 
+    </header> 
+    <p>方便实验室同学查看自己的打卡记录</p> 
+    <small>采用Echarts3,Mysql的架构</small>  
+    <div class="call-to-action"> 
+      <a href="http://checkin.9lou.org/" target="_blank">去看看</a> 
+    </div> 
+  </div> 
+</div> 
+</div>
+</body>
+</html>
+</div>  
+</section> 
+<div class="map-wrapper"> 
+  <div id="map-canvas"></div> 
+  <div id="map-overlay"></div> 
+  <section id="contact"> 
+   <div class="container"> 
+    <header> 
+      <h2>联系我</h2> 
+    </header> 
+    <p>可以向我发送邮件：</p> 
+    <div class="call-to-action"> 
+     <a class="animate" data-animation="swing" href="mailto:weiwenda@stu.xjtu.edu.cn">weiwenda@stu.xjtu.edu.cn</a> 
+   </div> 
+   <p>也可以用以下方式：</p> 
+   <ul class="social"> 
+     <li> <a target=blank href=tencent://message/?uin=994184916&Site=www.weiwenda.xyz&Menu=yes><span class="icon fa fa-qq"></span></a> </li> 
+   </ul> 
+ </div> 
+</section> 
+</div> 
+</div> 
+<footer id="main_footer"> 
+ <section> 
+  <div class="container"> 
+   <div class="center">
+    Copyright &copy; 2016 - Ricardo Garc&iacute;a Vega - Code, Love &amp; Boards!
+  </div> 
+</div> 
+</section>   
+</footer> 
+<script src="../static/lib/plugins/openLayer/build/ol.js"></script> 
+<script src="../static/lib/plugins/application-15483ecc.js"></script> 
+
+</body>
+</html>

@@ -1,0 +1,159 @@
+{% extends "layout.html" %}
+{% block title %}相册{% endblock %}
+{% block link %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../static/lib/plugins/gallery/css/blueimp-gallery.css">
+<link rel="stylesheet" href="../static/lib/plugins/gallery/css/blueimp-gallery-indicator.css">
+<!-- <link rel="stylesheet" href="../static/lib/plugins/gallery/css/demo.css"> -->
+{% endblock %}
+{% block main %}
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            {% for entry in entries %}
+            <button type="button" class="btn bg-info btn-flat margin looking" looking="{{ entry.dir_path }}">{{ entry.dir_name }}</button>
+            {% endfor %}
+            {% if session.logged_in is defined %}
+            <button type="button" class="btn bg-yellow btn-flat pull-right margin">
+            <a href="/gallery/Manage">图片管理</a></button>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tab-content no-padding">
+                <div class="tab-pane active" id="tab_honey">
+                   <!-- The Gallery as inline carousel, can be positioned anywhere on the page -->
+                   <div id="blueimp-image-carousel" class="blueimp-gallery blueimp-gallery-carousel">
+                    <div class="slides"></div>
+                    <h3 class="title"></h3>
+                    <a class="prev">‹</a>
+                    <a class="next">›</a>
+                    <a class="play-pause"></a>
+                </div>
+                <h2>图片列表</h2>
+                <!-- The Gallery as lightbox dialog, should be a child element of the document body -->
+                <div id="blueimp-gallery" class="blueimp-gallery">
+                    <div class="slides"></div>
+                    <h3 class="title"></h3>
+                    <a class="prev">‹</a>
+                    <a class="next">›</a>
+                    <a class="close">×</a>
+                    <a class="play-pause"></a>
+                    <ol class="indicator"></ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <!-- The container for the list of example images -->
+    <div id="links" class="links"></div>
+</div>
+  <!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2119886"></script>
+<!-- UY END -->
+</section>
+
+
+{% endblock %}
+{% block pageend %}
+<script src="../static/lib/plugins/gallery/js/blueimp-helper.js"></script>
+<script src="../static/lib/plugins/gallery/js/blueimp-gallery.js"></script>
+<script src="../static/lib/plugins/gallery/js/blueimp-gallery-fullscreen.js"></script>
+<script src="../static/lib/plugins/gallery/js/blueimp-gallery-indicator.js"></script>
+<script src="../static/lib/plugins/gallery/js/jquery.blueimp-gallery.js"></script>
+<script type="text/javascript">
+   /* global blueimp, $ */
+
+   $(function () {
+      'use strict'
+
+      // Load demo images from flickr:
+      $.ajax({
+        // Flickr API is SSL only:
+        // https://code.flickr.net/2014/04/30/flickr-api-going-ssl-only-on-june-27th-2014/
+        url: '/gallery/Detail',
+        async: true,
+        cache: false,
+        data: {
+            looking:"static/img_honey"
+        },
+    }).done(function (result) {
+        var carouselLinks = []
+        var linksContainer = $('#links')
+        var baseUrl
+        var totalNum=result.length/4
+        var divLabel=$('<div>')
+        var cols = new Array(divLabel,divLabel.clone(),divLabel.clone(),divLabel.clone())
+        // Add the demo images as links with thumbnails to the page:
+        $.each(result, function (index, photo) {
+          baseUrl = photo.url
+          cols[index%4]
+          .append($('<a/>').append($('<img>').prop('src', baseUrl))
+              .prop('href', baseUrl)
+              .prop('title', photo.title)
+              .prop('class','thumbnail')
+              .attr('data-gallery', ''))
+          carouselLinks.push({
+            href: baseUrl,
+            title: photo.title
+        });
+      });
+        $.each(cols, function (index, div) {
+            div.prop('class','col-md-3 col-xs-6')
+            .appendTo(linksContainer)
+        });
+        // Initialize the Gallery as image carousel:
+        blueimp.Gallery(carouselLinks, {
+          container: '#blueimp-image-carousel',
+          carousel: true
+      });
+    });
+    $(".looking").click(function(){
+        jQuery.ajax({
+          url: "/gallery/Detail",
+          async: true,
+          cache: false,
+          data:"looking="+$(this).attr('looking'),
+          success: function(result){
+           var carouselLinks = []
+           var linksContainer = $('#links')
+           linksContainer.empty()
+           var baseUrl
+           var totalNum=result.length/4
+           var divLabel=$('<div>')
+           var cols = new Array(divLabel,divLabel.clone(),divLabel.clone(),divLabel.clone())
+        // Add the demo images as links with thumbnails to the page:
+        $.each(result, function (index, photo) {
+          baseUrl = photo.url
+          cols[index%4]
+          .append($('<a/>').append($('<img>').prop('src', baseUrl))
+              .prop('href', baseUrl)
+              .prop('title', photo.title)
+              .prop('class','thumbnail')
+              .attr('data-gallery', ''))
+          carouselLinks.push({
+            href: baseUrl,
+            title: photo.title
+        });
+      });
+        $.each(cols, function (index, div) {
+            div.prop('class','col-md-3 col-xs-6')
+            .appendTo(linksContainer)
+        });
+        // Initialize the Gallery as image carousel:
+        blueimp.Gallery(carouselLinks, {
+          container: '#blueimp-image-carousel',
+          carousel: true
+      });
+    },
+    error:function(data){
+        alert("发生错误！");
+    }
+});
+    });
+})
+</script>
+{% endblock %}

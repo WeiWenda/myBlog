@@ -1,0 +1,482 @@
+{% extends "layout.html" %}
+{% block title %}日历{% endblock %}
+{% block link %}
+<!-- fullCalendar 2.2.5-->
+<link rel="stylesheet" href="../static/lib/plugins/fullcalendar/fullcalendar.min.css">
+<link rel="stylesheet" href="../static/lib/plugins/fullcalendar/fullcalendar.print.css" media="print">
+{% endblock %}
+{% block main %}
+<div id="DelModal" class="modal fade" role="dialog"  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">编辑事件</h4>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary">确认删除</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    日历
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa  fa-home"></i> Home</a></li>
+    <li class="active"> 日历</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+ <div class="row">
+
+  <!-- /.col -->
+  <div class="col-md-9">
+    <div class="box box-primary">
+      <div class="box-body no-padding">
+        <!-- THE CALENDAR -->
+        <div id="calendar"></div>
+      </div>
+      <!-- /.box-body -->
+    </div>
+    <!-- /. box -->
+  </div>
+  <div class="col-md-3">
+    <div class="box box-solid">
+      <div class="box-header with-border">
+        <h3 class="box-title">添加事务</h3>
+      </div>
+      <div class="box-body">
+        <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
+          <ul class="fc-color-picker" id="color-chooser">
+            <li><a class="text-aqua" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-blue" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-light-blue" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-teal" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-yellow" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-orange" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-green" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-lime" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-red" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-purple" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-fuchsia" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-muted" href="#"><i class="fa fa-square"></i></a></li>
+            <li><a class="text-navy" href="#"><i class="fa fa-square"></i></a></li>
+          </ul>
+        </div>
+        <!-- /btn-group -->
+        <div class="input-group">
+          <input id="new-event" type="text" class="form-control" placeholder="新的事务">
+          <div class="input-group-btn">
+            <button  type="button" class="add-new-event btn btn-primary btn-flat" longTerm= "false">添加
+            </button>
+            <button type="button" class="btn btn-primary btn-flat dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <!-- <span class="fa fa-caret-down"></span></button> -->
+            <ul class="dropdown-menu">
+              <li><div class="add-new-event btn btn-primary btn-flat" longTerm="true">添加长期事务</div></li>
+            </ul>
+          </div>
+        </div>
+        <!-- /input-group -->
+      </div>
+    </div>
+    <div class="box box-solid">
+      <div class="box-header with-border">
+        <h4 class="box-title">事务列表</h4>
+      </div>
+      <div class="box-body">
+        <!-- the events -->
+        <div id="external-events">
+          {% for entry in entries %}
+          <div class="external-event" event_id="{{ entry.id }}" style="border-color: {{ entry.borderColor }}; color: rgb(255, 255, 255);  background-color: {{ entry.backgroundColor }};" long_term="{{ entry.long_term }}" start="{{ entry.start }}">{{ entry.title }}
+            {% if entry.long_term is equalto 'false' %}
+            <span class="pull-right remain"></span>
+            {% else %}
+            <span class="pull-right remove"><i class="fa fa-remove"></i></span> 
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <!-- /.box-body -->
+    </div>
+    <!-- /. box -->
+    <div class="box box-solid">
+      <div class="box-header with-border">
+        <h4 class="box-title">快速跳转</h4>
+      </div>
+      <div class="box-body">
+        <div class="input-group date">
+          <div class="input-group-addon">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <input type="text" class="form-control pull-right" id="datepicker">
+          <div class="input-group-btn">
+            <button  type="button" class="form-control btn btn-primary btn-flat jumpTo" >跳转至
+            </button>
+          </div>
+        </div>
+        <!-- /.input group -->
+      </div>
+    </div>
+    <div id = "err1" class="box box-solid box-warning" style="display: none;">
+      <div class="box-header">
+        <h3 class="box-title">警告</h3>
+      </div><!-- /.box-header -->
+      <div class="box-body">
+      </div><!-- /.box-body -->
+    </div>
+    <div id= "success1" class="box box-solid box-success" style="display: none;">
+      <div class="box-header">
+        <h3 class="box-title">提示</h3>
+      </div><!-- /.box-header -->
+      <div class="box-body">
+      </div><!-- /.box-body -->
+    </div>
+  </div>
+  <!-- /.col -->
+</div>
+<!-- ./row -->
+</section>
+<!-- /.content -->
+{% endblock %}
+{% block pageend %}
+<!-- fullCalendar 2.2.5 -->
+<script src="../static/lib/plugins/moment.min.js"></script>
+<script src="../static/lib/plugins/fullcalendar/fullcalendar.min.js"></script>
+<script src="../static/lib/plugins/fullcalendar/locale-all.js"></script>
+<!-- bootstrap datepicker -->
+<script src="../static/lib/plugins/datepicker/bootstrap-datepicker.js"></script>
+<script>
+  $(function () {
+    /* initialize the external events
+    -----------------------------------------------------------------*/
+    function ini_events(ele) {
+      ele.each(function () {
+
+        // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
+        // it doesn't need to have a start or end
+        var eventObject = {
+          id: $(this).attr('event_id'),
+          title:  $.trim($(this).text()),
+          borderColor: $(this).css("background-color"),
+          backgroundColor:$(this).css("border-color")
+        };
+
+        // store the Event Object in the DOM element so we can get to it later
+        $(this).data('eventObject', eventObject);
+
+        // make the event draggable using jQuery UI
+        $(this).draggable({
+          zIndex: 1070,
+          revert: true, // will cause the event to go back to its
+          revertDuration: 0  //  original position after the drag
+        });
+
+      });
+    }
+    ini_events($('#external-events div.external-event'));
+
+    /* initialize the calendar
+    /* ADDING EVENTS */
+    var currColor = "#3c8dbc"; //Red by default
+    $('#calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay,listMonth'
+      },
+      //Random default events
+      events: '/calendar/getEvent',
+      selectable: true,
+      selectHelper: true,
+      select: function(start, end) {
+        var title = prompt('输入事务名称:');
+        var allDay = false;
+        var eventData;
+        if(!start.hasTime()){
+          allDay= true;
+        }
+        if (title) {
+          $.ajax({
+            url:"/calendar/Add",
+            type:"post",
+            data:{
+              title: title,
+              start: start.format(),
+              end: end.format(),
+              allDay:allDay,
+              backgroundColor:currColor,
+              borderColor:currColor
+            },
+            dataType: 'json',
+            success: function(res){
+              if(res.status == 0){
+                $("#success1 .box-body").html("<strong>添加成功!</strong>");
+                $("#success1").show();
+                setTimeout(function(){$("#success1").hide();},3000);
+              }else{
+                $("#err1 .box-body").html("<strong>添加失败!</strong>");
+                $("#err1").show();
+                setTimeout(function(){$("#err1").hide();},3000);
+              }
+              $('#calendar').fullCalendar('refetchEvents');
+            },
+            err:function(res){
+              $("#err1 .box-body").html("<strong>操作有误!</strong>");
+              $("#err1").show();
+              setTimeout(function(){$("#err1").hide();},3000);
+            }
+              });//insert
+        }
+        $('#calendar').fullCalendar('unselect');
+      },
+      editable: true,
+      droppable: true, // this allows things to be dropped onto the calendar !!!
+      locale: 'zh-cn',
+      drop: function (date) { 
+        if(date < moment($(this).attr('start'))) return
+          var originalEventObject = $(this).data('eventObject');
+        var copiedEventObject = $.extend({}, originalEventObject);
+        var allDay = false;
+        var long_term = $(this).attr('long_term');
+        if(!date.hasTime()){
+          allDay= true;
+        }
+        if(long_term=='true'){
+          copiedEventObject.start = date.format();
+          copiedEventObject.end = date.add(1,'d').format();
+        }else{
+          copiedEventObject.end = date.format();
+        }
+        copiedEventObject.allDay = allDay;
+        copiedEventObject.longTerm = long_term;
+        $.ajax({
+          url:"/calendar/Edit",
+          type:"post",
+          data:copiedEventObject,
+          dataType: 'json',
+          success: function(res){
+            if(res.status == 0){
+              $("#success1 .box-body").html("<strong>修改成功!</strong>");
+              $("#success1").show();
+              setTimeout(function(){$("#success1").hide();},3000);
+              if ($(this).attr('long_term')== 'false') {
+                $(this).remove();
+              }
+            }else{
+              $("#err1 .box-body").html("<strong>修改失败!</strong>");
+              $("#err1").show();
+              setTimeout(function(){$("#err1").hide();},3000);
+            }
+            $('#calendar').fullCalendar('refetchEvents');
+          },
+          err:function(res){
+            $("#err1 .box-body").html("<strong>修改有误!</strong>");
+            $("#err1").show();
+            setTimeout(function(){$("#err1").hide();},3000);
+          }
+              });//insert
+      },
+        //eventDragStart  eventDragStop eventDrop
+        eventClick:function(event){
+          // console.log(event);
+          $('.modal-body').html('将要删除事件<h2 class="text-red text-center">'+event.title+'</h2>');
+          $('.modal-footer .btn-primary').click(function () {
+           $.post('/calendar/remove',data={id:event.id},function(res){
+            if(res.status == 0){
+              $("#success1 .box-body").html("<strong>删除成功!</strong>");
+              $("#success1").show();
+              setTimeout(function(){$("#success1").hide();},3000);
+            }else{
+              $("#err1 .box-body").html("<strong>删除失败!</strong>");
+              $("#err1").show();
+              setTimeout(function(){$("#err1").hide();},3000);
+            }
+            $('#calendar').fullCalendar('refetchEvents');
+          });
+           $('#calendar').fullCalendar('refetchEvents');
+           $('#DelModal').modal('hide');
+         });
+          $('#DelModal').modal('show');
+        },
+        eventDrop: function(event, delta, revertFunc, jsEvent, ui, view) {
+          // console.log(event,delta,revertFunc,jsEvent,ui,view);
+          var end;
+          if(event.end!= null){
+            end = event.end;
+            // console.log('end is not null');
+          }else if(event.allDay == true ){
+            end= moment(event.start).add(1,'d');
+            // console.log('end is null all day is true');
+          }
+          else {
+            end = moment(event.start).add(1,'h');
+            // console.log('end is null all day is false');
+          }
+          $.ajax({
+            url:"/calendar/eventDropOrResize",
+            type:"post",
+            data:{
+              id:event.id,
+              start: event.start.format(),
+              end: end.format(),
+              allDay:event.allDay
+            },
+            dataType: 'json',
+            success: function(res){
+              if(res.status == 0){
+                $("#success1 .box-body").html("<strong>拖动成功!</strong>");
+                $("#success1").show();
+                setTimeout(function(){$("#success1").hide();},3000);
+              }else{
+                $("#err1 .box-body").html("<strong>拖动失败!</strong>");
+                $("#err1").show();
+                setTimeout(function(){$("#err1").hide();},3000);
+              }
+              $('#calendar').fullCalendar('refetchEvents');
+            },
+            err:function(res){
+              $("#err1 .box-body").html("<strong>拖动有误!</strong>");
+              $("#err1").show();
+              setTimeout(function(){$("#err1").hide();},3000);
+              revertFunc();
+            }
+              });//insert
+        },
+
+        eventResize : function(event, delta, revertFunc, jsEvent, ui, view) {
+          $.ajax({
+            url:"/calendar/eventDropOrResize",
+            type:"post",
+            data:{
+              id:event.id,
+              start: event.start.format(),
+              end: event.end.format(),
+              allDay:event.allDay
+            },
+            dataType: 'json',
+            success: function(res){
+              if(res.status == 0){
+                $("#success1 .box-body").html("<strong>Resize成功!</strong>");
+                $("#success1").show();
+                setTimeout(function(){$("#success1").hide();},3000);
+              }else{
+                $("#err1 .box-body").html("<strong>Resize失败!</strong>");
+                $("#err1").show();
+                setTimeout(function(){$("#err1").hide();},3000);
+              }
+              $('#calendar').fullCalendar('refetchEvents');
+            },
+            err:function(res){
+              $("#err1 .box-body").html("<strong>Resize有误!</strong>");
+              $("#err1").show();
+              setTimeout(function(){$("#err1").hide();},3000);
+              revertFunc();
+            }
+              });//insert
+        },
+        minTime:"06:00:00",
+        maxTime:"28:00:00",
+        nowIndicator:true
+
+      });
+
+
+$("#color-chooser > li > a").click(function (e) {
+  e.preventDefault();
+      //Save color
+      currColor = $(this).css("color");
+      //Add color effect to button
+      $('.add-new-event').css({"background-color": currColor, "border-color": currColor});
+      $('.dropdown-toggle').css({"background-color": currColor, "border-color": currColor});
+    });
+
+$(".add-new-event").click(function (e) {
+  e.preventDefault();
+      //Get value and make sure it is not null
+      var val = $("#new-event").val();
+      var longTerm=$(this).attr("longTerm")
+      if (val.length == 0) {
+        return;
+      }
+      jQuery.ajax({
+        type: "POST",
+        url: "/calendar/Add",
+        async: true,
+        cache: false,
+        data: {
+          title:val,
+          backgroundColor:currColor,
+          borderColor:currColor,
+          long_term:longTerm
+        },
+        success: function(res){
+          if(res.status == 0){
+            $("#success1 .box-body").html("<strong>添加成功!</strong>");
+            $("#success1").show();
+            setTimeout(function(){$("#success1").hide();},3000);
+                //Create events
+                var event = $("<div />");
+                event.css({"background-color": currColor, "border-color": currColor, "color": "#fff"}).addClass("external-event").attr('event_id',res.newid).attr('long_term',longTerm);
+                event.html(val)
+                if(longTerm == 'false')
+                  event.append($('<span>').prop('class',"pull-right").html('<i class="fa fa-clock-o"></i>　a few seconds'));
+                else 
+                 event.append($('<span>').prop('class',"pull-right remove").html('<i class="fa fa-remove"></i>').click(function () {
+                  $.post('/calendar/remove',data={id:$(this).parent().attr('event_id')})
+                  $(this).parent().remove();
+                }));
+               $('#external-events').prepend(event);
+
+          //Add draggable funtionality
+          ini_events(event);
+
+          //Remove event from text input
+          $("#new-event").val("");
+        }else{
+          $("#err1 .box-body").html("<strong>添加失败!</strong>");
+          $("#err1").show();
+          setTimeout(function(){$("#err1").hide();},3000);
+        }
+        $('#calendar').fullCalendar('refetchEvents');
+      },
+      err:function(res){
+        $("#err1 .box-body").html("<strong>添加有误!</strong>");
+        $("#err1").show();
+        setTimeout(function(){$("#err1").hide();},3000);
+        revertFunc();
+      }
+    });
+
+    });
+$(".remain").each(function(){
+  $(this).html('<i class="fa fa-clock-o"></i>　'+moment($(this).parent().attr('start')).fromNow());
+});
+$(".remove").click(function () {
+  $.post('/calendar/remove',data={id:$(this).parent().attr('event_id')})
+  $(this).parent().remove();
+});
+    //Date picker
+    $('#datepicker').datepicker({
+      autoclose: true
+    });
+    $(".jumpTo").click(function () {
+      var content = $('#datepicker').val() 
+      if(content == '') return
+        $('#calendar').fullCalendar('gotoDate',moment(content,"MM-DD-YYYY"));
+    });
+  });
+</script>
+{% endblock %}

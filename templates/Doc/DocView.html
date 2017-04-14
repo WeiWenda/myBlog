@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+{% block title %}文档内容
+{% endblock %}
+{% block link %}
+<link rel="stylesheet" href="../static/lib/plugins/editormd/editormd.preview.min.css" />
+{% endblock %}
+{% block main %}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    团队文档
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/"><i class="fa  fa-home"></i> Home</a></li>
+    <li> <a href="/doc/List">团队文档</a></li>
+    <li class="active">查看文档</li>
+  </ol>
+</section>
+<!-- Main content -->
+<section class="content">
+  <div style="display:none;" id ="docID" docID={{ doc_id }}></div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel box box-primary">
+        <div class="box-header with-border">
+          <h2 class="box-title docTitle"></h2> 
+          <small class="docTime"> </small> 
+        </div>
+
+        <div id="test-editormd-view">
+         <textarea style="display:none;" name="test-editormd-markdown-doc">###Hello world!</textarea>               
+       </div>
+       <!-- /.box-body -->
+     </div>
+   </div>
+ </div>
+   <!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2119886"></script>
+<!-- UY END -->
+</section>
+<!-- /.content -->
+{% endblock %}
+{% block pageend %}
+<script src="../static/lib/plugins/editormd/lib/marked.min.js"></script>
+<script src="../static/lib/plugins/editormd/lib/prettify.min.js"></script>
+
+<script src="../static/lib/plugins/editormd/lib/raphael.min.js"></script>
+<script src="../static/lib/plugins/editormd/lib/underscore.min.js"></script>
+<script src="../static/lib/plugins/editormd/lib/sequence-diagram.min.js"></script>
+<script src="../static/lib/plugins/editormd/lib/flowchart.min.js"></script>
+<script src="../static/lib/plugins/editormd/lib/jquery.flowchart.min.js"></script>
+
+<script src="../static/lib/plugins/editormd/editormd.min.js"></script>
+
+<script type="text/javascript">
+  $(document).ready( function() {
+    jQuery.ajax({
+      type: "POST",
+      url: "/doc/Detail",
+      async: true,
+      cache: false,
+      data:"doc_id="+$("#docID").attr("docID"),
+      success: function(msg){
+        var title = msg.title;
+        var content = msg.content;
+        var docTime = msg.create_date;
+        $(".docTitle").html(title);
+        $(".docTime").html("发表于："+docTime);
+        // console.log(content)
+        testEditormdView = editormd.markdownToHTML("test-editormd-view", {
+            markdown        : content ,//+ "\r\n" + $("#append-test").text(),
+            //htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
+            htmlDecode      : "style,script,iframe",  // you can filter tags decode
+            //toc             : false,
+            tocm            : true,    // Using [TOCM]
+            //tocContainer    : "#custom-toc-container", // 自定义 ToC 容器层
+            //gfm             : false,
+            //tocDropdown     : true,
+            // markdownSourceCode : true, // 是否保留 Markdown 源码，即是否删除保存源码的 Textarea 标签
+            emoji           : true,
+            taskList        : true,
+            tex             : true,  // 默认不解析
+            flowChart       : true,  // 默认不解析
+            sequenceDiagram : true,  // 默认不解析
+          });
+
+        //console.log("返回一个 jQuery 实例 =>", testEditormdView);
+        
+        // 获取Markdown源码
+        //console.log(testEditormdView.getMarkdown());
+        
+        //alert(testEditormdView.getMarkdown());
+    // $("#docContent").html(content);
+  },
+  error:function(data){
+    alert("发生错误！");
+  }
+});
+
+  }); 
+</script>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "layout.html" %}
+{% block title %}文档{% endblock %}
+{% block main %}
+<!-- Content Header (Page header) -->
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    团队文档
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/"><i class="fa  fa-home"></i> Home</a></li>
+    <li class="active"> 团队文档</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="row">
+    <div class="col-md-9">
+      <div class="tab-content no-padding">
+        <div class="tab-pane active">
+         <div class="box box-primary">
+          <div class="box-body no-padding">
+            {% if session.logged_in is defined %}
+            <div class="mailbox-controls">
+              <!-- Check all button -->
+              <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
+              </button>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default btn-sm AddButton"><i class="glyphicon glyphicon-plus"></i></button>
+                <button type="button" class="btn btn-default btn-sm DelButton"><i class="fa fa-trash-o"></i></button>
+              </div>
+            </div>
+            {% endif %}
+            <div class="table-responsive mailbox-messages">
+              <table isTable="" class="table table-hover table-striped">
+                <thead>
+                  <tr>
+                    {% if session.logged_in is defined %}
+                    <th>勾选</th>
+                    {% endif %}
+                    <th>文档名称</th>
+                    <th>文档概要</th>
+                    <th>录入时间</th>
+                    {% if session.logged_in is defined %}
+                    <th></th>
+                    {% endif %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for doc in entries.docs %}
+                  <tr>
+                    {% if session.logged_in is defined %}
+                    <td><input type="checkbox" name="toDel" value="{{ doc.doc_id }}"></td>
+                    {% endif %}
+                    <td class="mailbox-name"><a href="/doc/View?doc_id={{ doc.doc_id }}">{{ doc.title }}</a></td>
+                    <td class="mailbox-subject"> 
+                    <div class="tab-pane">
+                    {% for str in doc.abstract %}
+                    <p> {{ str }}
+                    {% endfor %}
+                    <a href="/doc/View?doc_id={{ doc.doc_id }}">继续阅读...</a>
+                    </div>
+                          <!-- <div class="box-body">{{ doc.abstract }}</div> -->
+                      <!-- <textarea  class="docContent">{{ doc.abstract }}</textarea> -->
+                    </td>
+                    <td class="mailbox-date"><small>发表于：{{ doc.date }}</small></td>
+                    {% if session.logged_in is defined %}
+                    <td ><a href="/doc/Edit?doc_id={{ doc.doc_id }}"><i class="ion ion-android-create"></i></a></td>
+                    {% endif %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    {% if session.logged_in is defined %}
+                    <th>勾选</th>
+                    {% endif %}
+                    <th>文档名称</th>
+                    <th>文档概要</th>
+                    <th>录入时间</th>
+                    {% if session.logged_in is defined %}
+                    <th></th>
+                    {% endif %}
+                  </tr>
+                </tfoot>
+              </table>
+              <!-- /.table -->
+            </div>
+            <!-- /.mail-box-messages -->
+          </div>
+          <!-- /.box-body -->
+        </div>
+        <!-- /. box -->
+      </div>
+    </div>
+    <!-- /.tab-content -->
+  </div>
+</div>
+</section>
+<!-- /.content -->
+<!-- /.content -->
+{% endblock %}
+{% block pageend %}
+<!-- DataTables -->
+<script src="../static/lib/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="../static/lib/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<!-- iCheck -->
+<script src="../static/lib/plugins/iCheck/icheck.min.js"></script>
+<script>
+  $(function () {
+   $('[isTable]').DataTable({
+      // "lengthMenu":[10,20,30],
+      "paging": true,
+      "pagingType": "full_numbers",
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "autoWidth": true,
+      "language": {
+          lengthMenu: '每页<select class="form-control input-xsmall">' + '<option value="10">10</option>'+'<option value="20">20</option>' + '<option value="30">30</option>'+ '</select>条记录',//左上角的分页大小显示。
+          search: '<span class="label label-primary">搜索：</span>',//右上角的搜索文本，可以写html标签
+
+          paginate: {//分页的样式内容。
+            previous: "上一页",
+            next: "下一页",
+            first: "第一页",
+            last: "最后"
+          },
+
+          zeroRecords: "暂时还没有内容！",//table tbody内容为空时，tbody的内容。
+          //下面三者构成了总体的左下角的内容。
+          info: "总共_PAGES_ 页，显示第_START_ 到第 _END_ ，筛选结果 _TOTAL_ 条，共_MAX_ 条 ",//左下角的信息显示，大写的词为关键字。
+          infoEmpty: "0条记录",//筛选为空时左下角的显示。
+          infoFiltered: ""//筛选之后的左下角筛选提示，
+        }
+      });
+   $(".AddButton").click(function(){
+    window.location.href = "/doc/Add";
+
+  });
+   $(".DelButton").click(function(){
+    var chk_value =[]; 
+    var s=$('input[name="toDel"]:checked').each(function(){ 
+      chk_value.push($(this).val()); 
+    });
+    if(chk_value.length==0){
+      alert('你还没有选择任何内容!'); 
+      return;
+    }
+    else if(!confirm('确认删除编号'+chk_value+"?"))
+      return;
+    jQuery.ajax({
+      type: "POST",
+      url: "/doc/Del",
+      async: true,
+      cache: false,
+      data:"doc_ids="+chk_value,
+      success: function(msg){
+        alert(msg);
+        location.reload();
+        $(".mailbox-messages input[type='checkbox']").iCheck("uncheck");
+      },
+      error:function(data){
+        alert("发生错误！");
+      }
+    });
+  });
+     //Enable iCheck plugin for checkboxes
+    //iCheck for checkbox and radio inputs
+    $('.mailbox-messages input[type="checkbox"]').iCheck({
+      checkboxClass: 'icheckbox_flat-blue',
+      radioClass: 'iradio_flat-blue'
+    });
+
+    //Enable check and uncheck all functionality
+    $(".checkbox-toggle").click(function () {
+      var clicks = $(this).data('clicks');
+      if (clicks) {
+        //Uncheck all checkboxes 
+        $('input[name="toDel"]').iCheck("uncheck");
+        $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
+      } else {
+        //Check all checkboxes
+        $('input[name="toDel"]').iCheck("check");
+        $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
+      }
+      $(this).data("clicks", !clicks);
+    });
+  });
+</script>
+{% endblock %}

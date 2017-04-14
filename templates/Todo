@@ -1,0 +1,25 @@
+#新的窗口打开网页 		got    	_blank
+#iframe本面失去响应     got	   	</iframe>
+#ftp设置帐号密码        got		添加组、管理用户、只读权限用户
+#侧边栏不亮             got		function Or <body class="hold-transition skin-blue sidebar-mini fixed" data-spy="scroll" data-target="#scrollspy" >	 <section class="sidebar" id="scrollspy"> <ul class="nav sidebar-menu">
+#title未设置 			got		增加传参
+#删除操作				got 	str的split
+#列表的定制				got
+#时间格式的定制			got
+#框架BlurPrint			got
+#删除警告框				got
+#单层类型兼容			got 	二级同名一级类型
+#列表处的内容缩略		got		py文件专门提取
+#Edit处的表单验证		got
+#登录权限问题			got
+#文件上传功能           got     使用flask_uploads模块
+#View处的手机正文越界
+#部署到云主机
+#右边栏
+#UnicodeError			got 	mysql sustring 的不安全截断
+#markdown 编辑显示		got
+#List处后退记忆			got		增加传参
+#文件管理插件           got     bootstrap fileInput
+#最大文件限制           got     nginx配置
+#评论功能               got     友言
+#首页酷炫 视差滚动      got     stellar

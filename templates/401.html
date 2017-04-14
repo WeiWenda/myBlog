@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block title %}401{% endblock %}
+{% block main %}
+ 
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        401 Error Page
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">401 error</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="error-page">
+        <h2 class="headline text-red">401</h2>
+
+        <div class="error-content">
+
+          <h3 ><i class="fa fa-warning text-red"></i> 对不起，产生401错误！</h3>
+
+          <p >
+            要获得访问权限必须进行<a href="/login">管理用户登录</a>
+          </p>
+        </div>
+      </div>
+      <!-- /.error-page -->
+
+    </section>
+    <!-- /.content -->
+  
+{% endblock %}
