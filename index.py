@@ -15,7 +15,7 @@ def app(environ, start_response):
             <h2>欢迎开启BAE之旅！</h2>
             <br>
             <br>
-            <ul>以下链接可能对您有用：</ul>
+            <ul>以下链接可能对您没用：</ul>
             <ul><a href="https://bce.baidu.com/doc/BAE/QuickGuide.html" target="_blank">入门指南</a></ul>
             <ul><a href="http://developer.baidu.com/forum/topic/list?boardId=66" target="_blank">论坛</a></ul>
             <ul><a href="http://www.baeblog.com/" target="_blank">技术博客</a></ul>
