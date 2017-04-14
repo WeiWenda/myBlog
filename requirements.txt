@@ -4,3 +4,4 @@ bae==2.0.9
 bae_log==1.0.0
 Werkzeug==0.12.1
 MySQL-python==1.2.5
+Jinja2==2.8
