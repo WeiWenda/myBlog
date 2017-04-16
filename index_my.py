@@ -84,6 +84,15 @@ def OurRecipe():
 @app.route('/OurTpin')
 def OurTpin():
     return render_template('gotoIFrame.html',entry=dict(url="http://tpin.1024cloud.com/TPIN/tpin/pages/lyglwl.html",page_title="TPIN Demo"))
+@app.route('/MyBaiduNetDisk')
+def MyBaiduNetDisk():
+    return render_template('gotoIFrame.html',entry=dict(url="http://pan.baidu.com/disk/home#list/path=%2F&vmode=list",page_title="我的百度网盘"))
+@app.route('/MyJianGuoYun')
+def MyJianGuoYun():
+    return render_template('gotoIFrame.html',entry=dict(url="https://www.jianguoyun.com/#path=%2F::sl=0::tab=browse::id=c4139b::magic=6d9106a0bfcdd06f",page_title="我的坚果云"))
+@app.route('/MyLeanote')
+def MyLeanote():
+    return render_template('gotoIFrame.html',entry=dict(url="https://leanote.com/",page_title="我的蚂蚁笔记"))
 @app.route('/MyFtp')
 def MyFtp():
     return render_template('gotoIFrame.html',entry=dict(url="ftp://ftpUser:ftpUser@202.117.16.35",page_title="我的FTP"))
