@@ -146,14 +146,23 @@ def Blog_Detail():
     date=row[2].isoformat(" ")
     Content =dict(title=row[0],content=row[1],create_date=date)
     return jsonify(Content)
+ALLOWED_EXTENSIONS = set(["jpg", "jpeg", "gif", "png", "bmp", "webp","JPG", "JPEG", "GIF", "PNG", "BMP", "WEBP"])
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 @blog_related.route("/blog/BosUpload", methods=['GET','POST'])
 def Blog_BosUpload():
     if not session.get('logged_in'):
         return render_template("401.html")
     if request.method == 'POST':
-        subfolder = str(request.args.get('blog_id'))
-        returnString,key,length = bos_related.save(request.files['upload'],'img_wangeditor/'+subfolder+'/')
-        return returnString
+        filename = request.files['upload'].filename
+        if allowed_file(filename):
+            subfolder = str(request.args.get('blog_id'))
+            returnString,key,length = bos_related.save(request.files['upload'],'img_wangeditor/'+subfolder+'/')
+            return returnString
+        else:
+            return "error|文件格式不正确（必须为.jpg/.jpeg/.png/.gif/.bmp/.webp文件）"
+    return "error|提交方式异常"
+
 @blog_related.route("/blog/CkeditorUpload", methods=['GET','POST'])
 def Blog_CkeditorUpload():
     if not session.get('logged_in'):
@@ -163,9 +172,9 @@ def Blog_CkeditorUpload():
         returnString=""
         # g.md_photos.url(filename)也可以，但是返回的是188:5000的地址
         try:
-            filename = g.ck_photos.save(request.files['upload'],folder=subfolder)
+            url = g.ck_photos.save(request.files['upload'],folder=subfolder)
         except UploadNotAllowed:
             returnString += "error|文件格式不正确（必须为.jpg/.jpe/.jpeg/.png/.gif/.svg/.bmp文件）"
             return returnString
-        returnString = "../"+string.replace(g.ck_photos.path(filename),'\\','/')
+        returnString = "../"+string.replace(g.ck_photos.path(url),'\\','/')
         return returnString
