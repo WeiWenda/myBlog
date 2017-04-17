@@ -8,6 +8,7 @@ import sys
 from extract_abstract import extract
 import shutil,os
 import string
+import bos_related
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -23,7 +24,7 @@ def Blog_Index():
 @blog_related.route('/blog/List')
 def Blog_List():
     BlogLType=int(request.args.get('type',3))
-    ThisSType=int(request.args.get('Stype',BlogLType*10+1))
+    ThisSType=int(request.args.get('SType',BlogLType*10+1))
     g.cursor.execute('select distinct(type_id),type_desc from blog_type where type_id between %s and %s',(BlogLType*10,BlogLType*10+9))
     STypes = [dict(type_id=row[0],type_desc=row[1]) for row in g.cursor.fetchall()]
     for SType in STypes:
@@ -74,26 +75,20 @@ def Blog_Add():
     if not session.get('logged_in'):
         return render_template("401.html")
     if request.method=='GET':
-        g.cursor.execute('select distinct(type_id),type_desc from blog_type where blog_type.type_id < 10 order by type_id')
-        LTypes = [dict(type_id=row[0], type_desc=row[1]) for row in g.cursor.fetchall()]
-        ThisSType = int(request.args.get('SType',21))
-        ThisLType = ThisSType/10
-        g.cursor.execute('select distinct(type_id),type_desc from blog_type where type_id between %s and %s',(ThisLType*10,ThisLType*10+9))
-        STypes = [dict(type_id=row[0],type_desc=row[1]) for row in g.cursor.fetchall()]
-        entries = dict(STypes=STypes, LTypes=LTypes,TSType=ThisSType,TLType=ThisLType)
-        return render_template("Blog/BlogAdd.html",entries=entries)
-    else:
-        blog_title=request.form['blog_title']
-        type_L=request.form['type_L']
-        type_S=request.form['type_S']
-        content=request.form['content']
+        blog_title='新的笔记标题'
+        type_S= int(request.args.get('SType'))
+        type_L= type_S/10
+        content= '<p>请输入内容...</p><p><br></p>'
         abstract=extract(content)
         if len(abstract)>500:
             abstract=abstract[:500]
         time=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         g.cursor.execute('insert into blog(title,content,create_date,author,type_L,type_S,abstract) values (%s,%s,%s,%s,%s,%s,%s)',(blog_title,content,time,"vivid",type_L,type_S,abstract))
         g.db.commit()
-    return redirect(url_for('.Blog_List',type=type_L,Stype=type_S))
+        g.cursor.execute('select blog_id from blog where create_date = "%s"'%(time))
+        blog_id =  g.cursor.fetchone()[0]
+        return redirect(url_for('.Blog_Edit',blog_id=blog_id,SType=type_S))
+    return redirect(url_for('.Blog_List',SType=type_S))
 
 @blog_related.route('/blog/Edit',methods=['POST','GET'])
 def Blog_Edit():
@@ -102,7 +97,7 @@ def Blog_Edit():
     if request.method=='GET':
         g.cursor.execute('select distinct(type_id),type_desc from blog_type where blog_type.type_id < 10 order by type_id')
         LTypes = [dict(type_id=row[0], type_desc=row[1]) for row in g.cursor.fetchall()]
-        ThisSType = int(request.args.get('SType',20))
+        ThisSType = int(request.args.get('SType'))
         ThisLType = ThisSType/10
         g.cursor.execute('select distinct(type_id),type_desc from blog_type where type_id between %s and %s',(ThisLType*10,ThisLType*10+9))
         STypes = [dict(type_id=row[0],type_desc=row[1]) for row in g.cursor.fetchall()]
@@ -131,11 +126,10 @@ def Blog_Del():
         file_path=g.ck_photos.config.destination+"/"+blog_id
         if os.path.isdir(file_path):
             shutil.rmtree(file_path)
+        bos_related.rmdir('img_wangeditor/'+blog_id)
         g.cursor.execute('delete from blog where blog_id = %d'% int(blog_id))
     g.db.commit()
     return "删除成功!"
-
-
 
 @blog_related.route("/blog/getSType", methods=['GET','POST'])
 def Blog_getSType():
@@ -152,6 +146,14 @@ def Blog_Detail():
     date=row[2].isoformat(" ")
     Content =dict(title=row[0],content=row[1],create_date=date)
     return jsonify(Content)
+@blog_related.route("/blog/BosUpload", methods=['GET','POST'])
+def Blog_BosUpload():
+    if not session.get('logged_in'):
+        return render_template("401.html")
+    if request.method == 'POST':
+        subfolder = str(request.args.get('blog_id'))
+        returnString,key,length = bos_related.save(request.files['upload'],'img_wangeditor/'+subfolder+'/')
+        return returnString
 @blog_related.route("/blog/CkeditorUpload", methods=['GET','POST'])
 def Blog_CkeditorUpload():
     if not session.get('logged_in'):

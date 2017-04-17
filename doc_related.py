@@ -9,6 +9,8 @@ import sys
 from extract_abstract import extract
 import shutil
 import string
+import bos_related
+import time
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -32,18 +34,18 @@ def Doc_Add():
     if not session.get('logged_in'):
         return render_template("401.html")
     if request.method=='GET':
-        return render_template("Doc/DocAdd.html")
-    else:
-        doc_title=request.form['doc_title']
-        content_md=request.form['editormd-markdown-doc']
-        content=request.form['editormd-html-code']
+        doc_title='新的文档标题'
+        content_md='### Hello Editor.md !'
+        content='<h3 id="h3-hello-editor-md-"><a name="Hello Editor.md !" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Hello Editor.md !</h3>'
         abstract=extract(content)
         if len(abstract)>500:
             abstract=abstract[:500]
         time=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        g.cursor.execute('insert into doc(title,content,abstract,create_date,author) values (%s,%s,%s,%s,%s)',(doc_title,content_md,abstract,time,"vivid"))
+        g.cursor.execute('insert into doc( title,content,abstract,create_date,author) values (%s,%s,%s,%s,%s)',(doc_title,content_md,abstract,time,"vivid"))
         g.db.commit()
-    return redirect(url_for('.Doc_List'))
+        g.cursor.execute('select doc_id from doc where create_date = "%s"'%(time))
+        doc_id =  g.cursor.fetchone()[0]
+    return render_template("Doc/DocEdit.html",doc_id=doc_id)
 
 @doc_related.route('/doc/Edit',methods=['POST','GET'])
 def Doc_Edit():
@@ -74,6 +76,7 @@ def Doc_Del():
         file_path=g.md_photos.config.destination+"/"+doc_id
         if os.path.isdir(file_path):
             shutil.rmtree(file_path)
+        bos_related.rmdir('img_md/'+doc_id)
         g.cursor.execute('delete from doc where doc_id = %d'% int(doc_id))
     g.db.commit()
     return "删除成功!"
@@ -87,6 +90,18 @@ def Doc_Detail():
     Content =dict(title=row[0],content=row[1],create_date=date)
     return jsonify(Content)
 
+@doc_related.route("/doc/BosUpload", methods=['GET','POST'])
+def Doc_BosUpload():
+    if not session.get('logged_in'):
+        return render_template("401.html")
+    if request.method == 'POST':
+        doc_id = str(request.args.get('doc_id'))
+        url,key,length = bos_related.save(request.files['editormd-image-file'],'img_md/'+doc_id+'/')
+        ret = dict(success=1,message="上传成功！",url=url)
+        return jsonify(ret)
+    ret = dict(success=0,message="格式有误！")
+    return jsonify(ret)
+ # fp = open("../static/img_md/IMG_1966.jpg",'rb')
 @doc_related.route("/doc/MardownUpload", methods=['GET','POST'])
 def Doc_MardownUpload():
     if not session.get('logged_in'):

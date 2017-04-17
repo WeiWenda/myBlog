@@ -134,7 +134,7 @@
         // console.log(content)
         $(".blogContent").html(content);
         var editor = new wangEditor('wangeditor');
-        editor.config.uploadImgUrl = "/blog/CkeditorUpload?blog_id="+$("#blogID").val();
+        editor.config.uploadImgUrl = "/blog/BosUpload?blog_id="+$("#blogID").val();
         editor.config.uploadImgFileName = 'upload';
         editor.create();
       },

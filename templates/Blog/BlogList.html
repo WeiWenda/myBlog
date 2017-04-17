@@ -29,19 +29,7 @@
              {% endif %}
              <a href="#tab_{{ entry.type_id }}" data-toggle="tab" aria-expanded="false">{{entry.type_desc}}</a></li>
              {% endfor %}
-             <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                Dropdown <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
-                <li role="presentation" class="divider"></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
-              </ul>
             </li>
-            <li class="pull-right"><a href="#" class="text-muted"><i class="fa fa-gear"></i></a></li>
           </ul>
           <div class="tab-content no-padding">
             {% for entry in entries %}
@@ -95,7 +83,7 @@
                             </td>
                             <td class="mailbox-date"><small>发表于：{{ blog.date }}</small></td>
                             {% if session.logged_in is defined %}
-                            <td ><a href="/blog/Edit?SType={{ entry.type_id }}&blog_id={{ blog.blog_id }}"><i class="ion ion-android-create"></i></a></td>
+                            <td ><a href="/blog/Edit?blog_id={{ blog.blog_id }}&SType={{ entry.type_id }}"><i class="ion ion-android-create"></i></a></td>
                             {% endif %}
                           </tr>
                           {% endfor %}
@@ -170,7 +158,6 @@
        $(".AddButton").click(function(){
         var SType = $(this).attr("SType");
         window.location.href = "/blog/Add?SType="+SType;
-
       });
        $(".DelButton").click(function(){
         var chk_value =[]; 

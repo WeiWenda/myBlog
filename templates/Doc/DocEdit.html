@@ -46,7 +46,7 @@
           <!-- /.box-body -->
 
           <div class="box-footer">
-            <button type="submit" class="btn btn-primary">修改</button>　
+            <button type="submit" class="btn btn-primary">保存修改</button>　
           </div>
         </form>
       </div>
@@ -91,7 +91,7 @@
         imageUpload : true,
         emoji : true,
         imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp","JPG", "JPEG", "GIF", "PNG", "BMP", "WEBP"],
-        imageUploadURL : "/doc/MardownUpload?doc_id="+$("#docID").val(),
+        imageUploadURL : "/doc/BosUpload?doc_id="+$("#docID").val(),
         path : "../static/lib/plugins/editormd/lib/" // Autoload modules mode, codemirror, marked... dependents libs path
           });
     $('#editDocForm')
