@@ -115,7 +115,7 @@ def Blog_Edit():
         time=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         g.cursor.execute('update blog set title = %s,content =%s,create_date= %s,type_L=%s,type_S=%s,abstract=%s where blog_id =%s ',(blog_title,content,time,type_L,type_S,abstract,blog_id))
         g.db.commit()
-    return redirect(url_for('.Blog_List',type=type_L,Stype=type_S))
+    return redirect(url_for('.Blog_List',type=type_L,SType=type_S))
 
 @blog_related.route("/blog/Del", methods=['GET','POST'])
 def Blog_Del():
