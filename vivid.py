@@ -11,6 +11,7 @@ from blog_related import blog_related
 from doc_related import doc_related
 from gallery_related import gallery_related
 from calendar_related import calendar_related
+import string
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -92,6 +93,19 @@ def MyFtp():
 @app.route('/MessageBoard')
 def MessageBoard():
     return render_template('MessageBoard.html')
+
+@app.route('/Search',methods=['POST'])
+def Search():
+    key = request.form.get('q')
+    if(len(string.replace(key,' ',''))==0):
+        return redirect(url_for('blog_related.Blog_Index'))
+    else:
+        g.cursor.execute("SELECT substring(blog.abstract,1,150), blog.blog_id, blog.type_L, blog.type_S, blog.title, bt1.type_desc, bt2.type_desc,blog.create_date FROM blog, blog_type AS bt1, blog_type AS bt2 WHERE blog.type_L = bt1.type_id AND blog.type_S = bt2.type_id AND blog.title like '%%%s%%'" % key) 
+        blogs = [dict(title=row[4],abstract=row[0].split('\n'),typeL=row[2],typeS=row[3],typeLDesc=row[5],typeSDesc=row[6],blog_id=row[1],create_date=row[7]) for row in g.cursor.fetchall()]
+        g.cursor.execute("SELECT doc.doc_id, doc.title,substring(doc.abstract,1,150),doc.create_date FROM doc where doc.title like '%%%s%%'" % key)
+        docs = [dict(title=row[1],abstract=row[2].split('\n'),typeDesc="团队文档",doc_id=row[0],create_date=row[3]) for row in g.cursor.fetchall()]
+        return render_template('Doc/SearchList.html',search=key,blogs=blogs,docs=docs)
+
 
 # def add_entry():
 #     if not session.get('logged_in'):
