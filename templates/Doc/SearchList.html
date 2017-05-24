@@ -51,7 +51,7 @@
                     {% for blog in blogs %}
                     <tr>
                       <td class="mailbox-name"><a href="/blog/View?blog_id={{ blog.blog_id }}&SType={{ blog.typeS }}">{{ blog.title }}</a></td>
-                      <td><a href="/blog/List?type={{ blog.typeL }}&Stype={{ blog.typeS }}">{{ blog.typeSDesc }}</a> </td>
+                      <td><a href="/blog/List?type={{ blog.typeL }}&SType={{ blog.typeS }}">{{ blog.typeSDesc }}</a> </td>
                       <td class="mailbox-subject">
                         <div class="tab-pane">
                           {% for str in blog.abstract %}
