@@ -76,7 +76,7 @@ def Blog_Add():
         return render_template("401.html")
     if request.method=='GET':
         blog_title='新的笔记标题'
-        type_S= int(request.args.get('SType'))
+        type_S= int(request.args.get('SType',21))
         type_L= type_S/10
         content= '<p>请输入内容...</p><p><br></p>'
         abstract=extract(content)
