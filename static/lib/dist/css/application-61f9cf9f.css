@@ -3199,6 +3199,9 @@ body {
 #main_content section#work .projects .project.tpin {
     background: #fff url("../img/tpin_demo.png") 50% 0
 }
+#main_content section#work .projects .project.srm {
+    background: #fff url("../img/srm.png") 50% 0
+}
 
 #main_content section#work .projects .project.checkin {
     background: #fff url("../img/checkin.jpg") 50% 0
