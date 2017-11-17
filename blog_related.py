@@ -154,13 +154,17 @@ def Blog_BosUpload():
     if not session.get('logged_in'):
         return render_template("401.html")
     if request.method == 'POST':
-        filename = request.files['upload'].filename
-        if allowed_file(filename):
-            subfolder = str(request.args.get('blog_id'))
-            returnString,key,length = bos_related.save(request.files['upload'],'img_wangeditor/'+subfolder+'/')
-            return returnString
-        else:
-            return "error|文件格式不正确（必须为.jpg/.jpeg/.png/.gif/.bmp/.webp文件）"
+        urls = []
+        result = dict(errno=0,data=urls)
+        for file in request.files.getlist('upload'):
+            filename = file.filename
+            if allowed_file(filename):
+                subfolder = str(request.args.get('blog_id'))
+                returnString,key,length = bos_related.save(file,'img_wangeditor/'+subfolder+'/')
+                urls.append(returnString)
+            # else:
+            #     urls.append("error|文件格式不正确（必须为.jpg/.jpeg/.png/.gif/.bmp/.webp文件）")
+        return jsonify(result)
     return "error|提交方式异常"
 
 @blog_related.route("/blog/CkeditorUpload", methods=['GET','POST'])
